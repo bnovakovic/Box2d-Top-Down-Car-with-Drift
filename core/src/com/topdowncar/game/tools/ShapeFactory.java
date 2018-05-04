@@ -6,7 +6,6 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
-import com.sun.istack.internal.NotNull;
 
 
 import static com.topdowncar.game.Constants.PPM;
@@ -14,7 +13,7 @@ import static com.topdowncar.game.Constants.PPM;
 public class ShapeFactory {
     private ShapeFactory() {}
 
-    public static Body createRectangle (Vector2 position, Vector2 size, BodyDef.BodyType type, World world, float density){
+    public static Body createRectangle (final Vector2 position, final Vector2 size, final BodyDef.BodyType type, final World world, final float density){
         final BodyDef bDef = new BodyDef();
         bDef.position.set(position.x / PPM, position.y / PPM);
         bDef.type = type;

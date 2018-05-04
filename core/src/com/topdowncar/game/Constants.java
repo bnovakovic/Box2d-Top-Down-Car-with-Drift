@@ -13,4 +13,6 @@ public class Constants {
 
     public static final Vector2 NO_GRAVITY = new Vector2(0,0);
     public static final float PPM = 50.0f;
+    public static final Vector2 PLAYER_SIZE = new Vector2(64, 128);
+    public static final float PLAYER_DENSITY = 0.4f;
 }

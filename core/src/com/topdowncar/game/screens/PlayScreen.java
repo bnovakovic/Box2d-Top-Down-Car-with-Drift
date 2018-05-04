@@ -12,6 +12,7 @@ import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.topdowncar.game.tools.MapLoader;
 import com.topdowncar.game.tools.ShapeFactory;
 
 import static com.topdowncar.game.Constants.NO_GRAVITY;
@@ -33,7 +34,8 @@ public class PlayScreen implements Screen {
         mGameCam = new OrthographicCamera();
         mGameCam.zoom = 6f;
         mGamePort = new FitViewport(640 / PPM, 480 / PPM, mGameCam);
-        mPlayer = ShapeFactory.createRectangle(new Vector2(0, 0), new Vector2(64, 128), BodyDef.BodyType.DynamicBody, mWorld, 0.4f);
+        final MapLoader mapLoader = new MapLoader(mWorld);
+        mPlayer = mapLoader.getPlayer();
     }
 
     @Override
@@ -54,7 +56,7 @@ public class PlayScreen implements Screen {
         mBox2dDebugRenderer.render(mWorld, mGameCam.combined);
     }
 
-    private void update(float delta) {
+    private void update(final float delta) {
         mWorld.step(delta, 6, 2);
         mGameCam.position.set(mPlayer.getPosition(), 0);
         mGameCam.update();
@@ -84,5 +86,6 @@ public class PlayScreen implements Screen {
     public void dispose() {
         mBatch.dispose();
         mBox2dDebugRenderer.dispose();
+        mWorld.dispose();
     }
 }
