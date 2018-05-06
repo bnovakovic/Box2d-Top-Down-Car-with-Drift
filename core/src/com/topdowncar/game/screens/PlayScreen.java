@@ -5,14 +5,12 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.topdowncar.game.tools.ShapeFactory;
+import com.topdowncar.game.tools.MapLoader;
 
 import static com.topdowncar.game.Constants.DEFAULT_ZOOM;
 import static com.topdowncar.game.Constants.GRAVITY;
@@ -26,6 +24,7 @@ public class PlayScreen implements Screen {
     private final OrthographicCamera mCamera;
     private final Viewport mViewport;
     private final Body mPlayer;
+    private final MapLoader mMapLoader;
 
     public PlayScreen() {
         mBatch = new SpriteBatch();
@@ -34,7 +33,8 @@ public class PlayScreen implements Screen {
         mCamera = new OrthographicCamera();
         mCamera.zoom = DEFAULT_ZOOM;
         mViewport = new FitViewport(640 / PPM, 480 / PPM, mCamera);
-        mPlayer = ShapeFactory.createRectangle(new Vector2(0, 0), new Vector2(64, 128), BodyDef.BodyType.DynamicBody, mWorld, 0.4f);
+        mMapLoader = new MapLoader(mWorld);
+        mPlayer = mMapLoader.getPlayer();
     }
 
     @Override
@@ -89,5 +89,6 @@ public class PlayScreen implements Screen {
         mBatch.dispose();
         mWorld.dispose();
         mB2dr.dispose();
+        mMapLoader.dispose();
     }
 }

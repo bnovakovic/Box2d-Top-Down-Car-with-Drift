@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" tiledversion="1.1.5" orientation="orthogonal" renderorder="left-down" width="100" height="54" tilewidth="128" tileheight="128" infinite="0" nextobjectid="168">
+ <objectgroup name="wall">
+  <object id="40" x="128" y="122" width="5376" height="134"/>
+  <object id="140" x="5376" y="512" width="3840" height="128"/>
+  <object id="141" x="4224" y="1536" width="6016" height="128"/>
+  <object id="142" x="5376" y="128" width="128" height="512"/>
+  <object id="143" x="128" y="128" width="128" height="5376"/>
+  <object id="145" x="1152" y="1152" width="3200" height="134"/>
+  <object id="146" x="4224" y="1152" width="128" height="3328"/>
+  <object id="147" x="1152" y="1152" width="128" height="3328"/>
+  <object id="148" x="9088" y="128" width="128" height="512"/>
+  <object id="150" x="9088" y="128" width="3584" height="128"/>
+  <object id="151" x="10112" y="1152" width="128" height="384"/>
+  <object id="152" x="10112" y="1152" width="1536" height="128"/>
+  <object id="153" x="12672" y="128" width="128" height="5376"/>
+  <object id="154" x="11648" y="1152" width="128" height="3328"/>
+  <object id="155" x="10752" y="5376" width="1920" height="128"/>
+  <object id="156" x="10624" y="3840" width="128" height="1664"/>
+  <object id="157" x="7808" y="3840" width="2944" height="128"/>
+  <object id="158" x="7808" y="2560" width="128" height="1280"/>
+  <object id="159" x="5248" y="2560" width="2688" height="128"/>
+  <object id="160" x="8832" y="2816" width="2944" height="128"/>
+  <object id="161" x="8832" y="1664" width="128" height="1280"/>
+  <object id="163" x="5248" y="2560" width="128" height="2944"/>
+  <object id="164" x="256" y="5376" width="5120" height="128"/>
+  <object id="165" x="1152" y="4352" width="3200" height="128"/>
+ </objectgroup>
+ <objectgroup name="player">
+  <object id="166" x="640" y="1920" width="128" height="256"/>
+ </objectgroup>
+</map>
