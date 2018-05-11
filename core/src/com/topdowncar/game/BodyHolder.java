@@ -29,12 +29,14 @@ public abstract class BodyHolder {
     }
 
     public void update(final float delta) {
-        mForwardSpeed = getForwardVelocity();
-        mLateralSpeed = getLateralVelocity();
-        if (mLateralSpeed.len() < DRIFT_OFFSET) {
-            killDrift();
-        } else {
-            handleDrift();
+        if (mDrift < 1){
+            mForwardSpeed = getForwardVelocity();
+            mLateralSpeed = getLateralVelocity();
+            if (mLateralSpeed.len() < DRIFT_OFFSET) {
+                killDrift();
+            } else {
+                handleDrift();
+            }
         }
     }
 

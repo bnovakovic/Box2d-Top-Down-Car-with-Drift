@@ -135,7 +135,13 @@ public class Car extends BodyHolder {
         if (mDriveDirection == DRIVE_DIRECTION_FORWARD) {
             baseVector.set(0, mAcceleration);
         } else if (mDriveDirection == DRIVE_DIRECTION_BACKWARD) {
-            baseVector.set(0, -mAcceleration);
+            if (direction() == DIRECTION_BACKWARD){
+                baseVector.set(0, -mAcceleration * 0.7f);
+            } else if (direction() == DIRECTION_FORWARD) {
+                baseVector.set(0, -mAcceleration * 1.3f);
+            } else {
+                baseVector.set(0, -mAcceleration);
+            }
         }
 
         if (direction() == DRIVE_DIRECTION_BACKWARD){
