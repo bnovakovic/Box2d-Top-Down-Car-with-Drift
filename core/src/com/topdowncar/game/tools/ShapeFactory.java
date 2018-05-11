@@ -12,7 +12,7 @@ import static com.topdowncar.game.Constants.PPM;
 public class ShapeFactory {
     private ShapeFactory() {}
 
-    public static Body createRectangle (final Vector2 position, final Vector2 size, final BodyDef.BodyType type, final World world, float density){
+    public static Body createRectangle (final Vector2 position, final Vector2 size, final BodyDef.BodyType type, final World world, float density, boolean sensor){
 
         // define body
         final BodyDef bdef = new BodyDef();
@@ -26,7 +26,7 @@ public class ShapeFactory {
         final FixtureDef fdef = new FixtureDef();
         fdef.shape = shape;
         fdef.density = density;
-
+        fdef.isSensor = sensor;
         body.createFixture(fdef);
         shape.dispose();
 
