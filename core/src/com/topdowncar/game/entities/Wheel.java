@@ -15,13 +15,11 @@ public class Wheel extends BodyHolder {
 
     private final boolean mPowered;
     private final Car mCar;
-    private final int mId;
 
     public Wheel(final Vector2 position, final Vector2 size, final BodyDef.BodyType type, final World world, final float density, final int id, final Car car, final boolean powered) {
-        super(position, size, type, world, density, true);
+        super(position, size, type, world, density, true, id);
         this.mCar = car;
         this.mPowered = powered;
-        this.mId = id;
     }
 
     public void setAngle(final float angle){

@@ -19,20 +19,23 @@ public abstract class BodyHolder {
 
     private final Body mBody;
     private float mDrift = 1;
+    private final int mId;
 
     public BodyHolder(final Body mBody) {
         this.mBody = mBody;
+        mId = -1;
     }
 
-    public BodyHolder(final Vector2 position, final Vector2 size, final BodyDef.BodyType type, final World world, float density, boolean sensor) {
+    public BodyHolder(final Vector2 position, final Vector2 size, final BodyDef.BodyType type, final World world, float density, final boolean sensor, final int id) {
         mBody = ShapeFactory.createRectangle(position, size, type, world, density, sensor);
+        this.mId = id;
     }
 
     public void update(final float delta) {
         if (mDrift < 1){
             mForwardSpeed = getForwardVelocity();
             mLateralSpeed = getLateralVelocity();
-            if (mLateralSpeed.len() < DRIFT_OFFSET) {
+            if (mLateralSpeed.len() < DRIFT_OFFSET && mId > 1) {
                 killDrift();
             } else {
                 handleDrift();
