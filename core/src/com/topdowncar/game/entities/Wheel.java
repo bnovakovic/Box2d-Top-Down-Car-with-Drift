@@ -25,4 +25,8 @@ public class Wheel extends BodyHolder {
     public void setAngle(final float angle){
         getBody().setTransform(getBody().getPosition(), mCar.getBody().getAngle() + angle * DEGTORAD);
     }
+
+    public boolean isPowered() {
+        return mPowered;
+    }
 }

@@ -128,7 +128,7 @@ public class Car extends BodyHolder {
             mCurrentWheelAngle = 0;
         }
 
-        for (Wheel wheel : mRevolvingWheels) {
+        for (Wheel wheel : new Array.ArrayIterator<Wheel>(mRevolvingWheels)) {
             wheel.setAngle(mCurrentWheelAngle);
         }
 
@@ -151,8 +151,10 @@ public class Car extends BodyHolder {
         }
 
         if (getBody().getLinearVelocity().len() < mCurrentMaxSpeed){
-            for (Wheel wheel : mAllWheels) {
-                wheel.getBody().applyForceToCenter(wheel.getBody().getWorldVector(baseVector), true);
+            for (Wheel wheel : new Array.ArrayIterator<Wheel>(mAllWheels)) {
+                if (wheel.isPowered()){
+                    wheel.getBody().applyForceToCenter(wheel.getBody().getWorldVector(baseVector), true);
+                }
             }
         }
     }
@@ -170,7 +172,7 @@ public class Car extends BodyHolder {
     public void update(float delta) {
         super.update(delta);
         processInput();
-        for (Wheel wheel : mAllWheels){
+        for (Wheel wheel : new Array.ArrayIterator<Wheel>(mAllWheels)){
             wheel.update(delta);
         }
 

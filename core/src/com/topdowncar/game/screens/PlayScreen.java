@@ -41,7 +41,7 @@ public class PlayScreen implements Screen {
         mCamera.zoom = DEFAULT_ZOOM;
         mViewport = new FitViewport(640 / PPM, 480 / PPM, mCamera);
         mMapLoader = new MapLoader(mWorld);
-        mPlayer = new Car(35.0f, 0.8f, 50, mMapLoader, Car.DRIVE_2WD, mWorld);
+        mPlayer = new Car(35.0f, 0.8f, 80, mMapLoader, Car.DRIVE_2WD, mWorld);
     }
 
     @Override

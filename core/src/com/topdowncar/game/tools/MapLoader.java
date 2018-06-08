@@ -29,7 +29,7 @@ public class MapLoader implements Disposable {
 
         final Array<RectangleMapObject> walls = mMap.getLayers().get(MAP_WALL).getObjects().getByType(RectangleMapObject.class);
 
-        for (RectangleMapObject rObject : walls){
+        for (RectangleMapObject rObject : new Array.ArrayIterator<RectangleMapObject>(walls)){
             Rectangle rectangle = rObject.getRectangle();
             ShapeFactory.createRectangle(
                     new Vector2(rectangle.getX() + rectangle.getWidth() / 2, rectangle.getY() + rectangle.getHeight() / 2), // position
