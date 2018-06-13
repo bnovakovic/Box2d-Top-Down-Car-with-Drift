@@ -7,6 +7,7 @@ import com.badlogic.gdx.physics.box2d.joints.PrismaticJointDef;
 import com.badlogic.gdx.physics.box2d.joints.RevoluteJointDef;
 import com.badlogic.gdx.utils.Array;
 import com.topdowncar.game.BodyHolder;
+import com.topdowncar.game.screens.PlayScreen;
 import com.topdowncar.game.tools.MapLoader;
 
 import static com.topdowncar.game.Constants.PPM;
@@ -31,6 +32,13 @@ public class Car extends BodyHolder {
     private static final float MAX_WHEEL_ANGLE = 20.0f;
     private static final float WHEEL_TURN_INCREMENT = 1.0f;
 
+    private static final float WHEEL_OFFSET_X = 64;
+    private static final float WHEEL_OFFSET_Y = 80;
+    private static final int WHEEL_NUMBER = 4;
+
+    private static final float BREAK_POWER = 1.3f;
+    private static final float REVERSE_POWER = 0.5f;
+
     private int mDriveDirection = DRIVE_DIRECTION_NONE;
     private int mTurnDirection = TURN_DIRECTION_NONE;
 
@@ -42,7 +50,16 @@ public class Car extends BodyHolder {
     private final float mRegularMaxSpeed;
     private float mAcceleration;
 
-    public Car(final float maxSpeed, final float drift, final float acceleration, final MapLoader mapLoader, int wheelDrive, World world) {
+    /**
+     * Base constructor for Car object
+     * @param maxSpeed Maximum car speed
+     * @param drift car drift value (0 - no drift, 1 absolute drift)
+     * @param acceleration car acceleration amount
+     * @param mapLoader {@link MapLoader} used to load get car position from the map
+     * @param wheelDrive does this car have 4 wheel drive or 2 wheel drive
+     * @param world {@link com.topdowncar.game.screens.PlayScreen#mWorld} used to control and add physics objects
+     */
+    public Car(final float maxSpeed, final float drift, final float acceleration, final MapLoader mapLoader, final int wheelDrive, final World world) {
         super(mapLoader.getPlayer());
         this.mRegularMaxSpeed = maxSpeed;
         this.mDrift = drift;
@@ -52,49 +69,53 @@ public class Car extends BodyHolder {
         createWheels(world, wheelDrive);
     }
 
-    private void createWheels(World world, int wheelDrive) {
-        for (int i = 0; i < 4; i++) {
+    /**
+     * Method used to create wheel
+     * @param world {@link com.topdowncar.game.screens.PlayScreen#mWorld} used to control and add physics objects
+     * @param wheelDrive does this car have 4 wheel drive or 2 wheel drive
+     */
+    private void createWheels(final World world, final int wheelDrive) {
+        for (int i = 0; i < WHEEL_NUMBER; i++) {
             float xOffset = 0;
             float yOffset = 0;
 
             switch (i) {
                 case Wheel.UPPER_LEFT:
-                    xOffset = -64;
-                    yOffset = 80;
+                    xOffset = -WHEEL_OFFSET_X;
+                    yOffset = WHEEL_OFFSET_Y;
                     break;
                 case Wheel.UPPER_RIGHT:
-                    xOffset = 64;
-                    yOffset = 80;
+                    xOffset = WHEEL_OFFSET_X;
+                    yOffset = WHEEL_OFFSET_Y;
                     break;
                 case Wheel.DOWN_LEFT:
-                    xOffset = -64;
-                    yOffset = -80;
+                    xOffset = -WHEEL_OFFSET_X;
+                    yOffset = -WHEEL_OFFSET_Y;
                     break;
                 case Wheel.DOWN_RIGHT:
-                    xOffset = 64;
-                    yOffset = -80;
+                    xOffset = WHEEL_OFFSET_X;
+                    yOffset = -WHEEL_OFFSET_Y;
                     break;
                 default:
+                    throw new IllegalArgumentException("Wheel number not supported. Create logic for positioning wheel with number " + i);
             }
-            boolean powered = wheelDrive == DRIVE_4WD || (wheelDrive == DRIVE_2WD && i < 2);
+            final boolean powered = wheelDrive == DRIVE_4WD || (wheelDrive == DRIVE_2WD && i < 2);
 
-            Wheel wheel = new Wheel(
+            final Wheel wheel = new Wheel(
                     new Vector2(getBody().getPosition().x * PPM + xOffset, getBody().getPosition().y * PPM + yOffset),
                     WHEEL_SIZE,
-                    BodyDef.BodyType.DynamicBody,
                     world,
-                    0.4f,
                     i,
                     this,
                     powered);
 
-            if (i  < 2 ){
-                RevoluteJointDef jointDef = new RevoluteJointDef();
+            if (i < 2) {
+                final RevoluteJointDef jointDef = new RevoluteJointDef();
                 jointDef.initialize(getBody(), wheel.getBody(), wheel.getBody().getWorldCenter());
                 jointDef.enableMotor = false;
                 world.createJoint(jointDef);
             } else {
-                PrismaticJointDef jointDef = new PrismaticJointDef();
+                final PrismaticJointDef jointDef = new PrismaticJointDef();
                 jointDef.initialize(getBody(), wheel.getBody(), wheel.getBody().getWorldCenter(), new Vector2(1, 0));
                 jointDef.enableLimit = true;
                 jointDef.lowerTranslation = jointDef.upperTranslation = 0;
@@ -102,7 +123,7 @@ public class Car extends BodyHolder {
             }
 
             mAllWheels.add(wheel);
-            if (i < 2){
+            if (i < 2) {
                 mRevolvingWheels.add(wheel);
             }
             wheel.setDrift(mDrift);
@@ -110,61 +131,70 @@ public class Car extends BodyHolder {
 
     }
 
-
+    /**
+     * Used to process input received from GDX handled in {@link PlayScreen#handleInput()}
+     */
     private void processInput() {
-        Vector2 baseVector = new Vector2(0, 0);
+        final Vector2 baseVector = new Vector2(0, 0);
 
         if (mTurnDirection == TURN_DIRECTION_LEFT) {
-            if (mCurrentWheelAngle < 0){
+            if (mCurrentWheelAngle < 0) {
                 mCurrentWheelAngle = 0;
             }
             mCurrentWheelAngle = Math.min(mCurrentWheelAngle += WHEEL_TURN_INCREMENT, MAX_WHEEL_ANGLE);
         } else if (mTurnDirection == TURN_DIRECTION_RIGHT) {
-            if (mCurrentWheelAngle > 0){
+            if (mCurrentWheelAngle > 0) {
                 mCurrentWheelAngle = 0;
             }
             mCurrentWheelAngle = Math.max(mCurrentWheelAngle -= WHEEL_TURN_INCREMENT, -MAX_WHEEL_ANGLE);
-        } else  {
+        } else {
             mCurrentWheelAngle = 0;
         }
 
-        for (Wheel wheel : new Array.ArrayIterator<Wheel>(mRevolvingWheels)) {
+        for (final Wheel wheel : new Array.ArrayIterator<Wheel>(mRevolvingWheels)) {
             wheel.setAngle(mCurrentWheelAngle);
         }
 
         if (mDriveDirection == DRIVE_DIRECTION_FORWARD) {
             baseVector.set(0, mAcceleration);
         } else if (mDriveDirection == DRIVE_DIRECTION_BACKWARD) {
-            if (direction() == DIRECTION_BACKWARD){
-                baseVector.set(0, -mAcceleration * 0.7f);
+            if (direction() == DIRECTION_BACKWARD) {
+                baseVector.set(0, -mAcceleration * REVERSE_POWER);
             } else if (direction() == DIRECTION_FORWARD) {
-                baseVector.set(0, -mAcceleration * 1.3f);
+                baseVector.set(0, -mAcceleration * BREAK_POWER);
             } else {
                 baseVector.set(0, -mAcceleration);
             }
         }
+        // we currently set mCurrentMaxSpeed to regular speed, but we can use this to increase max
+        // speed if user has turbo, or something like that. So we can apply this logic:
+        // if (turboActive) {
+        //    mCurrentMaxSpeed = mRegularMaxSpeed * 1.5f;
+        //}
+        mCurrentMaxSpeed = mRegularMaxSpeed;
 
-        if (direction() == DRIVE_DIRECTION_BACKWARD){
-            mCurrentMaxSpeed = mRegularMaxSpeed / 2;
-        } else {
-            mCurrentMaxSpeed = mRegularMaxSpeed;
-        }
-
-        if (getBody().getLinearVelocity().len() < mCurrentMaxSpeed){
-            for (Wheel wheel : new Array.ArrayIterator<Wheel>(mAllWheels)) {
-                if (wheel.isPowered()){
+        if (getBody().getLinearVelocity().len() < mCurrentMaxSpeed) {
+            for (final Wheel wheel : new Array.ArrayIterator<Wheel>(mAllWheels)) {
+                if (wheel.isPowered()) {
                     wheel.getBody().applyForceToCenter(wheel.getBody().getWorldVector(baseVector), true);
                 }
             }
         }
     }
 
-
-    public void setDriveDirection(int driveDirection) {
+    /**
+     * Setting drive direction either to forward or backward
+     * @param driveDirection drive direction to set
+     */
+    public void setDriveDirection(final int driveDirection) {
         this.mDriveDirection = driveDirection;
     }
 
-    public void setTurnDirection(int turnDirection) {
+    /**
+     * Setting turn direction either to left or right
+     * @param turnDirection turn direction left or right
+     */
+    public void setTurnDirection(final int turnDirection) {
         this.mTurnDirection = turnDirection;
     }
 
@@ -172,7 +202,7 @@ public class Car extends BodyHolder {
     public void update(float delta) {
         super.update(delta);
         processInput();
-        for (Wheel wheel : new Array.ArrayIterator<Wheel>(mAllWheels)){
+        for (final Wheel wheel : new Array.ArrayIterator<Wheel>(mAllWheels)) {
             wheel.update(delta);
         }
 

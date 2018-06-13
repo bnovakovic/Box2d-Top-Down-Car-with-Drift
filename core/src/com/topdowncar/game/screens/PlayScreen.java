@@ -13,18 +13,22 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.topdowncar.game.entities.Car;
 import com.topdowncar.game.tools.MapLoader;
 
+import static com.topdowncar.game.Constants.DEFAULT_ZOOM;
+import static com.topdowncar.game.Constants.GRAVITY;
+import static com.topdowncar.game.Constants.POSITION_ITERATION;
+import static com.topdowncar.game.Constants.PPM;
+import static com.topdowncar.game.Constants.RESOLUTION;
+import static com.topdowncar.game.Constants.VELOCITY_ITERATION;
 import static com.topdowncar.game.entities.Car.DRIVE_DIRECTION_BACKWARD;
 import static com.topdowncar.game.entities.Car.DRIVE_DIRECTION_FORWARD;
 import static com.topdowncar.game.entities.Car.DRIVE_DIRECTION_NONE;
 import static com.topdowncar.game.entities.Car.TURN_DIRECTION_LEFT;
 import static com.topdowncar.game.entities.Car.TURN_DIRECTION_NONE;
 import static com.topdowncar.game.entities.Car.TURN_DIRECTION_RIGHT;
-import static com.topdowncar.game.Constants.DEFAULT_ZOOM;
-import static com.topdowncar.game.Constants.GRAVITY;
-import static com.topdowncar.game.Constants.PPM;
 
 public class PlayScreen implements Screen {
 
+    private static final float CAMERA_ZOOM = 0.3f;
     private final SpriteBatch mBatch;
     private final World mWorld;
     private final Box2DDebugRenderer mB2dr;
@@ -33,13 +37,16 @@ public class PlayScreen implements Screen {
     private final Car mPlayer;
     private final MapLoader mMapLoader;
 
+    /**
+     * Base constructor for PlayScreen
+     */
     public PlayScreen() {
         mBatch = new SpriteBatch();
         mWorld = new World(GRAVITY, true);
         mB2dr = new Box2DDebugRenderer();
         mCamera = new OrthographicCamera();
         mCamera.zoom = DEFAULT_ZOOM;
-        mViewport = new FitViewport(640 / PPM, 480 / PPM, mCamera);
+        mViewport = new FitViewport(RESOLUTION.x / PPM, RESOLUTION.y / PPM, mCamera);
         mMapLoader = new MapLoader(mWorld);
         mPlayer = new Car(35.0f, 0.8f, 80, mMapLoader, Car.DRIVE_2WD, mWorld);
     }
@@ -59,6 +66,10 @@ public class PlayScreen implements Screen {
 
     }
 
+    /**
+     * Handling user input and using {@link Car} class to assign direction values
+     * Also handling other input, such as escape to quit the game and camera zoom
+     */
     private void handleInput() {
         if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
             mPlayer.setDriveDirection(DRIVE_DIRECTION_FORWARD);
@@ -81,22 +92,29 @@ public class PlayScreen implements Screen {
         }
 
         if (Gdx.input.isKeyPressed(Input.Keys.Q)) {
-            mCamera.zoom -= 0.4f;
+            mCamera.zoom -= CAMERA_ZOOM;
         } else if (Gdx.input.isKeyPressed(Input.Keys.E)) {
-            mCamera.zoom += 0.4f;
+            mCamera.zoom += CAMERA_ZOOM;
         }
     }
 
+    /**
+     * Used only for graphic to draw stuff
+     */
     private void draw() {
         mBatch.setProjectionMatrix(mCamera.combined);
         mB2dr.render(mWorld, mCamera.combined);
     }
 
+    /**
+     * Main update method used for logic
+     * @param delta delta time received from {@link PlayScreen#render(float)} method
+     */
     private void update(final float delta) {
         mPlayer.update(delta);
         mCamera.position.set(mPlayer.getBody().getPosition(), 0);
         mCamera.update();
-        mWorld.step(delta, 6, 2);
+        mWorld.step(delta, VELOCITY_ITERATION, POSITION_ITERATION);
     }
 
     @Override
